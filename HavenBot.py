@@ -2,8 +2,10 @@ from pathlib import Path
 
 import discord
 import sys
+import random
 from aiohttp import ClientSession
 from discord.ext import commands
+from requests import get
 
 from Welcome import Welcome
 
@@ -46,10 +48,10 @@ async def welcome_member(member):
 @bot.event
 async def on_member_remove(member):
     if welcome.is_enabled():
-        await alert_member_leave(member)
+        await alert_member_kick(member)
 
 
-async def alert_member_leave(member):
+async def alert_member_kick(member):
     message = '{0.mention} has been kicked from the server. Good riddance.'
     channel_id = welcome.get_channel_id()
     if channel_id == -1:
@@ -67,6 +69,24 @@ async def alert_member_leave(member):
     else:
         channel = bot.get_channel(channel_id)
     await channel.send(message.format(member))
+
+
+@commands.check(is_admin)
+@bot.command()
+async def whatsYourIp(ctx):
+    ip = get('https://api.ipify.org').text
+    # isPrivateChannel = ctx.channel.is_private
+
+    await ctx.send("Sliding into your DMs with that sweet sweet :eggplant:.")
+    await ctx.message.author.send('My public IP address is: {}'.format(ip))
+
+
+@commands.check(is_admin)
+@bot.command()
+async def flirt(ctx):
+    flirts = [':eggplant:']
+
+    await ctx.send(random.choice(flirts))
 
 
 @commands.check(is_admin)
