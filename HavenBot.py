@@ -43,6 +43,32 @@ async def welcome_member(member):
     await channel.send(message.format(member))
 
 
+@bot.event
+async def on_member_remove(member):
+    if welcome.is_enabled():
+        await alert_member_leave(member)
+
+
+async def alert_member_leave(member):
+    message = '{0.mention} has been kicked from the server. Good riddance.'
+    channel_id = welcome.get_channel_id()
+    if channel_id == -1:
+        channel = bot.get_channel(member.guild.channels[00].id)
+    else:
+        channel = bot.get_channel(channel_id)
+    await channel.send(message.format(member))
+
+
+async def alert_member_leave(member):
+    message = '{0.mention} has left the server. :wave:'
+    channel_id = welcome.get_channel_id()
+    if channel_id == -1:
+        channel = bot.get_channel(member.guild.channels[00].id)
+    else:
+        channel = bot.get_channel(channel_id)
+    await channel.send(message.format(member))
+
+
 @commands.check(is_admin)
 @bot.command()
 async def toggleWelcome(ctx):
