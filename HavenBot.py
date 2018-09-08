@@ -45,7 +45,7 @@ async def on_member_remove(member):
 @bot.event
 async def on_member_ban(member):
     if welcome.is_enabled():
-        message = '{0.mention} ({0.display_name}#{0.discriminator}) has been banned from the server. Good riddance.'
+        message = '{0.mention} ({0.display_name}#{0.discriminator}) has been banned from the server. '
         await alert_of_member_change_state(member, message)
 
 
@@ -58,13 +58,7 @@ async def on_member_unban(member):
 
 async def welcome_member(member):
     message = welcome.get_welcome_message()
-    channel_id = welcome.get_channel_id()
-    if channel_id == -1:
-        channel = bot.get_channel(member.guild.channels[00].id)
-    else:
-        channel = bot.get_channel(channel_id)
-    await channel.send(message.format(member))
-
+    alert_of_member_change_state(member, message)
 
 async def alert_of_member_change_state(member, message):
     channel_id = welcome.get_channel_id()
