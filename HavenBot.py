@@ -35,6 +35,27 @@ async def on_member_join(member):
         await welcome_member(member)
 
 
+@bot.event
+async def on_member_remove(member):
+    if welcome.is_enabled():
+        message = '{0.mention} ({0.display_name}#{0.discriminator}) has left the server. :wave:'
+        await alert_of_member_change_state(member, message)
+
+
+@bot.event
+async def on_member_ban(member):
+    if welcome.is_enabled():
+        message = '{0.mention} ({0.display_name}#{0.discriminator}) has been banned from the server. Good riddance.'
+        await alert_of_member_change_state(member, message)
+
+
+@bot.event
+async def on_member_unban(member):
+    if welcome.is_enabled():
+        message = '{0.mention} ({0.display_name}#{0.discriminator}) has been unbanned from the server.'
+        await alert_of_member_change_state(member, message)
+
+
 async def welcome_member(member):
     message = welcome.get_welcome_message()
     channel_id = welcome.get_channel_id()
@@ -45,24 +66,7 @@ async def welcome_member(member):
     await channel.send(message.format(member))
 
 
-@bot.event
-async def on_member_remove(member):
-    if welcome.is_enabled():
-        await alert_member_kick(member)
-
-
-async def alert_member_kick(member):
-    message = '{0.mention} has been kicked from the server. Good riddance.'
-    channel_id = welcome.get_channel_id()
-    if channel_id == -1:
-        channel = bot.get_channel(member.guild.channels[00].id)
-    else:
-        channel = bot.get_channel(channel_id)
-    await channel.send(message.format(member))
-
-
-async def alert_member_leave(member):
-    message = '{0.mention} has left the server. :wave:'
+async def alert_of_member_change_state(member, message):
     channel_id = welcome.get_channel_id()
     if channel_id == -1:
         channel = bot.get_channel(member.guild.channels[00].id)
@@ -79,6 +83,12 @@ async def whatsYourIp(ctx):
 
     await ctx.send("Sliding into your DMs with that sweet sweet :eggplant:.")
     await ctx.message.author.send('My public IP address is: {}'.format(ip))
+
+
+@commands.check(is_admin)
+@bot.command()
+async def echo(ctx, *, arg):
+    await ctx.send(arg.format(ctx.author))
 
 
 @commands.check(is_admin)
