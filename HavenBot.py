@@ -58,7 +58,8 @@ async def on_member_unban(member):
 
 async def welcome_member(member):
     message = welcome.get_welcome_message()
-    alert_of_member_change_state(member, message)
+    await alert_of_member_change_state(member, message)
+
 
 async def alert_of_member_change_state(member, message):
     channel_id = welcome.get_channel_id()
