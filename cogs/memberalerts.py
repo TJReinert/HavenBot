@@ -123,7 +123,7 @@ class MemberAlerts:
     @commands.guild_only()
     async def joined(self, ctx, *, member: discord.Member):
         """Says when a member joined."""
-        await ctx.send(f'{member.display_name} joined on {member.joined_at}')
+        await ctx.send('{member.display_name} joined on {member.joined_at}')
 
 
 def setup(bot):
