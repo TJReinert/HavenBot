@@ -26,7 +26,7 @@ if __name__ == '__main__':
         try:
             bot.load_extension(extension)
         except (discord.ClientException, ModuleNotFoundError) as e:
-            print(f'Failed to load extension {extension}.', file=sys.stderr)
+            print('Failed to load extension {extension}.', file=sys.stderr)
             traceback.print_exc()
 
 
@@ -41,6 +41,8 @@ async def on_ready():
 
 async def is_admin(ctx):
     return ctx.message.author.guild_permissions.administrator
+
+
 
 
 @commands.check(is_admin)
