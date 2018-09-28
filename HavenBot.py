@@ -1,3 +1,4 @@
+import traceback
 from pathlib import Path
 
 import discord
@@ -6,11 +7,27 @@ import random
 from aiohttp import ClientSession
 from discord.ext import commands
 from requests import get
+from os import listdir
+from os.path import isfile, join
 
-from Welcome import Welcome
 
 bot = commands.Bot(command_prefix='$', description='A bot that greets the user back.')
 client = discord.Client().user
+
+
+def get_cogs_extensions_list():
+    cogs_dir = 'cogs'
+    return ['.'.join([cogs_dir, f.replace('.py', '')]) for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))]
+
+
+if __name__ == '__main__':
+    for extension in get_cogs_extensions_list():
+        print(extension)
+        try:
+            bot.load_extension(extension)
+        except (discord.ClientException, ModuleNotFoundError) as e:
+            print(f'Failed to load extension {extension}.', file=sys.stderr)
+            traceback.print_exc()
 
 
 @bot.event
@@ -24,50 +41,6 @@ async def on_ready():
 
 async def is_admin(ctx):
     return ctx.message.author.guild_permissions.administrator
-
-# WelcomeBot Accessors
-welcome = Welcome()
-
-
-@bot.event
-async def on_member_join(member):
-    if welcome.is_enabled():
-        await welcome_member(member)
-
-
-@bot.event
-async def on_member_remove(member):
-    if welcome.is_enabled():
-        message = '{0.mention} ({0.display_name}#{0.discriminator}) has left the server. :wave:'
-        await alert_of_member_change_state(member, message)
-
-
-@bot.event
-async def on_member_ban(member):
-    if welcome.is_enabled():
-        message = '{0.mention} ({0.display_name}#{0.discriminator}) has been banned from the server. '
-        await alert_of_member_change_state(member, message)
-
-
-@bot.event
-async def on_member_unban(member):
-    if welcome.is_enabled():
-        message = '{0.mention} ({0.display_name}#{0.discriminator}) has been unbanned from the server.'
-        await alert_of_member_change_state(member, message)
-
-
-async def welcome_member(member):
-    message = welcome.get_welcome_message()
-    await alert_of_member_change_state(member, message)
-
-
-async def alert_of_member_change_state(member, message):
-    channel_id = welcome.get_channel_id()
-    if channel_id == -1:
-        channel = bot.get_channel(member.guild.channels[00].id)
-    else:
-        channel = bot.get_channel(channel_id)
-    await channel.send(message.format(member))
 
 
 @commands.check(is_admin)
@@ -92,31 +65,6 @@ async def flirt(ctx):
     flirts = [':eggplant:']
 
     await ctx.send(random.choice(flirts))
-
-
-@commands.check(is_admin)
-@bot.command()
-async def toggleWelcome(ctx):
-    new_state = 'enabled' if welcome.toggle() else 'disabled'
-    await ctx.send("Welcome messeges have been {}.".format(new_state))
-
-
-@commands.check(is_admin)
-@bot.command()
-async def setWelcome(ctx, *, arg):
-    welcome.set_welcome_message(arg)
-    await ctx.send("Welcome messeges have been set to {}.".format(arg)
-                   + '\n'
-                   + "It will look like this when someone joins."
-                   + '\n')
-    await welcome_member(ctx.author)
-
-
-@commands.check(is_admin)
-@bot.command()
-async def welcomeHere(ctx):
-    welcome.set_channel_id(str(ctx.channel.id))
-    await ctx.send("Okay, I will welcome new members in {0.channel.mention}".format(ctx))
 
 
 @commands.check(is_admin)
