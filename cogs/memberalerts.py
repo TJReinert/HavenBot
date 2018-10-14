@@ -50,9 +50,9 @@ class MemberAlerts:
     def toggle_auto_ban(self):
         is_enabled = self.auto_ban_is_enabled()
         if is_enabled:
-            self.disable_welcome()
+            self.disable_auto_ban()
         else:
-            self.enable_welcome()
+            self.enable_auto_ban()
         return not is_enabled
 
     def enable_auto_ban(self):
@@ -105,7 +105,7 @@ class MemberAlerts:
 
     @commands.check(PermissionChecks.is_admin)
     @commands.command(name='autoban.toggle')
-    async def toggle_welcome(self, ctx):
+    async def toggle_auto_ban(self, ctx):
         new_state = 'enabled' if self.toggle_auto_ban() else 'disabled'
         await ctx.send("Autoban has been {}.".format(new_state))
 
