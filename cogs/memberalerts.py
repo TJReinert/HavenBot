@@ -33,7 +33,7 @@ class MemberAlerts:
     def create_default_config(self):
         self.configUtil.write_new_settings(self.defaults)
 
-    def toggle(self):
+    def toggle_welcome_flag(self):
         is_enabled = self.welcome_is_enabled()
         if is_enabled:
             self.disable_welcome()
@@ -47,7 +47,7 @@ class MemberAlerts:
     def disable_welcome(self):
         self.configUtil.set('enabled', 'False')
 
-    def toggle_auto_ban(self):
+    def toggle_auto_ban_flag(self):
         is_enabled = self.auto_ban_is_enabled()
         if is_enabled:
             self.disable_auto_ban()
@@ -100,13 +100,13 @@ class MemberAlerts:
     @commands.check(PermissionChecks.is_admin)
     @commands.command(name='welcome.toggle')
     async def toggle_welcome(self, ctx):
-        new_state = 'enabled' if self.toggle() else 'disabled'
+        new_state = 'enabled' if self.toggle_welcome_flag() else 'disabled'
         await ctx.send("Welcome messeges have been {}.".format(new_state))
 
     @commands.check(PermissionChecks.is_admin)
     @commands.command(name='autoban.toggle')
     async def toggle_auto_ban(self, ctx):
-        new_state = 'enabled' if self.toggle_auto_ban() else 'disabled'
+        new_state = 'enabled' if self.toggle_auto_ban_flag() else 'disabled'
         await ctx.send("Autoban has been {}.".format(new_state))
 
     @commands.check(PermissionChecks.is_admin)
