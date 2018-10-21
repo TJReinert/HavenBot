@@ -21,7 +21,7 @@ class MemberAlerts:
     def __init__(self, bot):
         self.configUtil = ConfigurationHelper.ConfigUtil('welcome')
         self.messageUtil = MessageHelper.MessageUtil(bot)
-        self.ban_regex = r"(discord.(me|gg))"
+        self.ban_regex = r"(\.([0-z]{2,9})\/)"
 
         if not self.configUtil.config_exists():
             self.create_default_config()
